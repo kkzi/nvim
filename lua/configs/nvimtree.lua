@@ -1,15 +1,24 @@
-require("nvchad.configs.nvimtree").defaults()
+local options = {
+  sync_root_with_cwd = true,
+  reload_on_bufenter = false,
+  respect_buf_cwd = false,
+  view = {
+    -- width = "25%",
+    width = 40,
+  },
+  update_focused_file = {
+    enable = false,
+    update_root = {
+      enable = true,
+      ignore_list = {},
+    },
+    exclude = false,
+  },
+  renderer = {
+    group_empty = true,
+    full_name = true,
+    root_folder_label = ":~:s?$?",
+  },
+}
 
--- local nvimtree = require "nvimtree"
--- nvimtree.options = {
---   prefer_startup_root = true,
---   sync_root_with_cwd = true,
---   reload_on_bufenter = true,
--- respect_buf_cwd=true,
---   update_focused_file = {
---     enable = true,
---     update_root = {
---       enable = true,
---     },
---   },
--- }
+return options

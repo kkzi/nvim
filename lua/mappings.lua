@@ -14,7 +14,7 @@ map({ "n", "i", "t" }, "<A-`>", function()
   require("nvchad.term").toggle {
     pos = "float",
     id = "FloatTerm",
-    float_opts = { relative = "win", row = 0.05, col = 0.05, width = 0.9, height = 0.8 },
+    float_opts = { relative = "editor", row = 0.05, col = 0.05, width = 0.9, height = 0.8 },
   }
 end, { desc = "terminal toggle floating term" })
 map("t", "<ESC>", function()
