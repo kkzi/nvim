@@ -5,7 +5,8 @@
 local M = {}
 
 M.base46 = {
-  theme = "onedark",
+  theme = "github_light",
+  theme_toggle = { "github_light", "github_dark" },
 
   hl_override = {
     Normal = {
@@ -15,5 +16,17 @@ M.base46 = {
     -- ["@comment"] = { italic = true },
   },
 }
+
+M.ui = {
+  statusline = {
+    theme = "vscode_colored", -- default, vscode, vscode_colored or minimal
+  },
+  telescope = { style = "bordered" }, -- borderless / bordered
+  tabufline = {
+    order = { "treeOffset", "buffers", "tabs" }, -- "btns" },
+    modules = nil,
+  },
+}
+
 
 return M

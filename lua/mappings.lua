@@ -43,6 +43,7 @@ map({ "c", "i" }, "<S-Insert>", "<C-r>+", {})
 -- preference
 map("n", "<leader>zp", "<cmd>:e $MYVIMRC<CR>", { desc = "Preferences" })
 map("n", "<leader>zk", "<cmd>Telescope keymaps<CR>", { desc = "Shortcuts" })
+map("n", "<leader>zc", "<cmd>cd %:p:h<CR>", { desc = "Cd current buffer file dir" })
 
 -- c++
 -- map({ "i", "n" }, "<M-o>", "<CMD>ClangdSwitchSourceHeader<CR>")

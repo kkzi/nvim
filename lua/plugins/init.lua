@@ -18,6 +18,11 @@ return {
     opts = require "configs.nvimtree",
   },
 
+  {
+    "hrsh7th/nvim-cmp",
+    opts = require "configs.nvimcmp"
+  },
+
   -- {
   -- 	"nvim-treesitter/nvim-treesitter",
   -- 	opts = {
@@ -27,4 +32,5 @@ return {
   -- 		},
   -- 	},
   -- },
+  --
 }
