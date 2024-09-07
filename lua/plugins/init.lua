@@ -1,4 +1,5 @@
 return {
+  { "lewis6991/gitsigns.nvim", enabled = false },
   {
     "stevearc/conform.nvim",
     -- event = 'BufWritePre', -- uncomment for format on save
@@ -20,7 +21,7 @@ return {
 
   {
     "hrsh7th/nvim-cmp",
-    opts = require "configs.nvimcmp"
+    opts = require "configs.nvimcmp",
   },
 
   -- {
