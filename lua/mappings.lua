@@ -8,38 +8,20 @@ local nomap = vim.keymap.del
 -- nomap("n", "<leader>b")
 -- nomap({ "n", "t" }, "<A-i>")
 
-map({ "n", "i", "t" }, "<A-`>", function()
-  require("nvchad.term").toggle {
-    pos = "float",
-    id = "FloatTerm",
-    float_opts = { relative = "editor", row = 0.05, col = 0.05, width = 0.9, height = 0.8 },
-  }
-end, { desc = "terminal toggle floating term" })
-
-map("t", "<ESC>", function()
-  require("nvchad.term").toggle {
-    pos = "float",
-    id = "FloatTerm",
-  }
-end, { desc = "hide float terminal" })
-
 map("n", "<ESC>", "<CMD>nohl<CR>", { desc = "clear hilights" })
 
 -- map("i", "jk", "<esc>")
 map("n", ";", ":")
+map("n", "gh", "_", { desc = "goto line start" })
+map("n", "gl", "$", { desc = "goto line end" })
+map("n", "ge", "G", { desc = "goto last line" })
 map("n", "<A-h>", "<C-w>h", { desc = "switch window left" })
 map("n", "<A-l>", "<C-w>l", { desc = "switch window right" })
 map("n", "<A-j>", "<C-w>j", { desc = "switch window down" })
 map("n", "<A-k>", "<C-w>k", { desc = "switch window up" })
-map({ "n", "i", "t" }, "<A-w>", function()
-  require("nvchad.tabufline").close_buffer()
-end, { desc = "buffer close" })
-
-map("n", "<leader>?", "<cmd>NvCheatsheet<CR>", { desc = "show cheatsheet" })
-
--- custom
 
 map({ "c", "i" }, "<S-Insert>", "<C-r>+", {})
+map({ "c", "i" }, "<C-v>", "<C-r>+", {})
 
 -- preference
 map("n", "<leader>zp", "<cmd>:e $MYVIMRC<CR>", { desc = "Preferences" })
