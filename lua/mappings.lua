@@ -15,12 +15,15 @@ map({ "n", "i", "t" }, "<A-`>", function()
     float_opts = { relative = "editor", row = 0.05, col = 0.05, width = 0.9, height = 0.8 },
   }
 end, { desc = "terminal toggle floating term" })
+
 map("t", "<ESC>", function()
   require("nvchad.term").toggle {
     pos = "float",
     id = "FloatTerm",
   }
 end, { desc = "hide float terminal" })
+
+map("n", "<ESC>", "<CMD>nohl<CR>", { desc = "clear hilights" })
 
 -- map("i", "jk", "<esc>")
 map("n", ";", ":")

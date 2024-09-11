@@ -17,35 +17,91 @@ return {
 			"nvim-lua/plenary.nvim",
 			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
 			"MunifTanjim/nui.nvim",
-			-- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
 		},
-	},
-
-	{
-		"romgrk/barbar.nvim",
-		dependencies = {
-			-- "lewis6991/gitsigns.nvim", -- OPTIONAL: for git status
-			"nvim-tree/nvim-web-devicons", -- OPTIONAL: for file icons
-		},
-		init = function()
-			vim.g.barbar_auto_setup = false
+		opts = {},
+		keys = function()
+			local tree = require("neo-tree.command");
+			return {
+				{ "<leader>fe", function() tree.execute({ action = "show", toggle = true,  position = "left", dir = ".", }) end, desc = "Toggle explorer", },
+				{ "<leader>fH", function() tree.execute({ action = "show", toggle = false, position = "left", dir = "~", }) end, desc = "Explorer Home", },
+				{ "<leader>fE", function() vim.cmd("cd %:p:h") end, desc = "Reload neotree", },
+			}
 		end,
-		opts = {
-			-- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-			-- animation = true,
-			-- insert_at_start = true,
-			-- …etc.
+	},
+	{
+		"willothy/nvim-cokeline",
+		dependencies = {
+			"nvim-lua/plenary.nvim",        -- Required for v0.4.0+
+			"nvim-tree/nvim-web-devicons", -- If you want devicons
+			--"stevearc/resession.nvim"       -- Optional, for persistent history
 		},
-		version = "^1.0.0", -- optional: only update when a new 1.x version is released
+		config = true,
+		opts = {
+			sidebar = {
+				filetype = { "neo-tree" },
+				components = { {text=" Explorer"} },
+			},
+			default_hl = {
+				bg = function (buffer) 
+					local hlgroups = require("cokeline.hlgroups")
+					return buffer.is_focused and "#CCCC00" or hlgroups.get_hl_attr("ColorColumn", "bg")
+				end,
+				fg = function (buffer) 
+					local hlgroups = require("cokeline.hlgroups")
+					return buffer.is_focused and "#000000" or hlgroups.get_hl_attr("Normal", "fg")
+				end,
+			},
+		},
+		keys = function()
+        	local coke = require('cokeline.mappings'); --pick("focus")
+			return {
+				{ "<TAB>",   	"<Plug>(cokeline-focus-next)", desc = "Next buffer", },
+				{ "<S-TAB>", 	"<Plug>(cokeline-focus-prev)", desc = "Prev buffer", },
+				{ "<leader>bb", "<Plug>(cokeline-pick-focus)", desc = "Pick buffer", },
+			}
+		end,
 	},
 
 	{
 		"nvim-lualine/lualine.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {},
+		opts = {
+			options = {
+				icons_enabled = false,
+				-- section_separators = { left = ' ', right = ' ' },
+				component_separators = { left = ' ', right = ' ' }
+			}, 
+			sections = {
+				lualine_a = {'mode'},
+				lualine_b = {'branch', 'diff', 'diagnostics'},
+				lualine_c = {
+					{
+						'filename',
+						file_status = true,      -- Displays file status (readonly status, modified status)
+						newfile_status = false,  -- Display new file status (new file means no write after created)
+						path = 1,                -- 0: Just the filename 1: Relative path 2: Absolute path
+						-- 3: Absolute path, with tilde as the home directory
+						-- 4: Filename and parent dir, with tilde as the home directory
+
+						shorting_target = 40,    -- Shortens path to leave 40 spaces in the window
+						-- for other components. (terrible name, any suggestions?)
+						symbols = {
+							modified = '[+]',      -- Text to show when the file is modified.
+							readonly = '[-]',      -- Text to show when the file is non-modifiable or readonly.
+							unnamed = '[No Name]', -- Text to show for unnamed buffers.
+							newfile = '[New]',     -- Text to show for newly created file before first write
+						}
+					}
+				},
+				lualine_x = {'encoding', 'fileformat', 'filetype'},
+				lualine_y = {'progress'},
+				lualine_z = {'location'}
+			},
+			extensions = {"neo-tree", "mason"}
+		},
 	},
 
-	{ "folke/which-key.nvim", lazy = true },
+	{ "folke/which-key.nvim", lazy = true, opts={} },
 	{
 		"hrsh7th/nvim-cmp",
 		-- load cmp on InsertEnter
@@ -78,6 +134,17 @@ return {
 		opts = {},
 	},
 
+	{ "echasnovski/mini.align", version = '*', opts={} },
+
+	{
+		'windwp/nvim-autopairs',
+		event = "InsertEnter",
+		config = true
+		-- use opts = {} for passing setup options
+		-- this is equivalent to setup({}) function
+	},
+
+
 	{
 		"williamboman/mason.nvim",
 		opts = {},
@@ -108,10 +175,10 @@ return {
 		    -- local tt = require("telescope.themes").get_dropdown({});
 		    local tt = {};
 			return {
-				{ "<leader>ff", function() tb.find_files(tt) end, desc = "Telescope find files", },
-				{ "<leader>fo", function() tb.oldfiles(tt) end, desc = "Telescope find recent files", },
-				{ "<leader>fb", function() tb.buffers(tt) end, desc = "Telescope buffers", },
-				{ "<leader>fc", function() tb.commands(tt) end, desc = "Telescope commands", },
+				{ "<leader>ff", function() tb.find_files(tt)  end, desc = "Telescope find files", },
+				{ "<leader>fo", function() tb.oldfiles(tt)    end, desc = "Telescope find recent files", },
+				{ "<leader>fb", function() tb.buffers(tt)     end, desc = "Telescope buffers", },
+				{ "<leader>fc", function() tb.commands(tt)    end, desc = "Telescope commands", },
 				{ "<leader>ft", function() tb.colorscheme(tt) end, desc = "Telescope colorscheme", },
 			}
 		end,
