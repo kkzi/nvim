@@ -9,7 +9,6 @@ return {
 	},
 	{
 		"famiu/bufdelete.nvim",
-		opts = {},
 		keys = {
 			{
 				"<A-w>",
@@ -118,7 +117,7 @@ return {
 		config = true,
 		opts = {
 			sidebar = {
-				filetype = { "neo-tree" },
+				-- filetype = { "neo-tree" },
 				components = { { text = " Explorer" } },
 			},
 			default_hl = {
@@ -138,7 +137,7 @@ return {
 				{ "<TAB>", "<Plug>(cokeline-focus-next)", desc = "Next buffer" },
 				{ "<S-TAB>", "<Plug>(cokeline-focus-prev)", desc = "Prev buffer" },
 				{ "<leader>bb", "<Plug>(cokeline-pick-focus)", desc = "Pick buffer" },
-				{ "<leader>bd", "<Plug>(cokeline-pick-close)", desc = "Pick buffer" },
+				{ "<leader>bd", "<Plug>(cokeline-pick-close)", desc = "Close buffer" },
 			}
 		end,
 	},
@@ -227,8 +226,24 @@ return {
 			end
 			local cmp = require("cmp")
 			return {
+				formatting = {
+					format = function(_, item)
+						local MAX_LABEL_WIDTH = 64
+						local content = item.abbr
+						if #content > MAX_LABEL_WIDTH then
+							item.abbr = vim.fn.strcharpart(content, 0, MAX_LABEL_WIDTH) .. "..."
+						else
+							item.abbr = content .. (" "):rep(MAX_LABEL_WIDTH - #content)
+						end
+						return item
+					end,
+				},
 				completion = {
 					completeopt = "menu,menuone,noinsert",
+					-- keyword_length = 2,
+				},
+				performance = {
+					max_view_entries = 10,
 				},
 				snippet = {
 					expand = function(args)
@@ -296,7 +311,9 @@ return {
 			require("mason").setup({
 				ui = { border = "single" },
 			})
-			require("mason-lspconfig").setup()
+			require("mason-lspconfig").setup({
+				ensure_installed = { "lua_ls", "clangd", "neocmake", "zls" },
+			})
 			require("mason-lspconfig").setup_handlers({
 				function(server_name) -- default handler (optional)
 					require("lspconfig")[server_name].setup({})
@@ -313,7 +330,7 @@ return {
 				-- Customize or remove this keymap to your liking
 				"<leader>fm",
 				function()
-					require("conform").format({ async = true })
+					require("conform").format({ async = true, lsp_fallback = true })
 				end,
 				mode = "",
 				desc = "Format buffer",
@@ -323,11 +340,15 @@ return {
 		---@module "conform"
 		---@type conform.setupOpts
 		opts = {
+			notify_on_error = true,
+
 			-- Define your formatters
 			formatters_by_ft = {
 				lua = { "stylua" },
 				python = { "isort", "black" },
 				javascript = { "prettierd", "prettier", stop_after_first = true },
+				c = { "clang_format" },
+				cpp = { "clang_format" },
 			},
 			-- Set default options
 			default_format_opts = {
@@ -339,6 +360,9 @@ return {
 			formatters = {
 				shfmt = {
 					prepend_args = { "-i", "2" },
+				},
+				clang_format = {
+					prepend_args = { "--style=file", "--fallback-style=Microsoft" },
 				},
 			},
 		},
