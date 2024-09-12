@@ -213,6 +213,7 @@ return {
 			"hrsh7th/nvim-cmp",
 			"hrsh7th/cmp-vsnip",
 			"hrsh7th/vim-vsnip",
+			"rafamadriz/friendly-snippets",
 		},
 		opts = function()
 			local feedkey = function(key, mode)
