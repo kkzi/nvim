@@ -119,35 +119,18 @@ return {
 			}
 		end,
 	},
+	{ "echasnovski/mini.statusline", opts = {} },
 	{
-		"nvim-lualine/lualine.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {
-			options = {
-				icons_enabled = true,
-				-- section_separators = { left = ' ', right = ' ' },
-				component_separators = { left = " ", right = " " },
-			},
-			sections = {
-				lualine_a = { "mode" },
-				lualine_b = { "branch", "diff", "diagnostics" },
-				lualine_c = {
-					{
-						"filename",
-						file_status = true, -- Displays file status (readonly status, modified status)
-						newfile_status = false, -- Display new file status (new file means no write after created)
-						path = 2, -- 0: Just the filename 1: Relative path 2: Absolute path
-						-- 3: Absolute path, with tilde as the home directory
-						-- 4: Filename and parent dir, with tilde as the home directory
-						shorting_target = 40, -- Shortens path to leave 40 spaces in the window
-					},
+		"echasnovski/mini.indentscope",
+		config = function()
+			local indent = require("mini.indentscope")
+			indent.setup({
+				draw = {
+					delay = 50,
+					animation = indent.gen_animation.quadratic({ easing = "out", duration = 10, unit = "step" }),
 				},
-				lualine_x = { "encoding", "fileformat", "filetype" },
-				lualine_y = { "progress" },
-				lualine_z = { "location" },
-			},
-			extensions = { "neo-tree", "mason" },
-		},
+			})
+		end,
 	},
 	{
 		"akinsho/toggleterm.nvim",
@@ -233,8 +216,8 @@ return {
 							cmp.select_next_item()
 						elseif vim.fn["vsnip#available"](1) == 1 then
 							feedkey("<Plug>(vsnip-expand-or-jump)", "")
-						elseif has_words_before() then
-							cmp.complete()
+						-- elseif has_words_before() then
+						-- 	cmp.complete()
 						else
 							fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
 						end
