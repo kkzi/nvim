@@ -16,26 +16,28 @@ map("n", "<A-k>", "<C-w>k", { desc = "switch window up" })
 map({ "c", "i" }, "<S-Insert>", "<C-r>+")
 map({ "c", "i" }, "<C-v>", "<C-r>+", {})
 map({ "n", "i", "v" }, "<C-s>", "<CMD>w<CR>", {})
+map({ "n" }, ",y", '"+Y', {})
+map({ "v" }, ",y", '"+y', {})
+map({ "n", "v" }, ",p", '"+p', {})
+map({ "n", "v" }, ",P", '"+P', {})
 
 -- preference
 local edit_file = function(file)
-	vim.cmd("edit " .. vim.fn.stdpath("config") .. file)
+  vim.cmd("edit " .. vim.fn.stdpath "config" .. file)
 end
 map("n", "<Leader>zp", "<CMD>e $MYVIMRC<CR>", { desc = "Edit init.lua" })
-map("n", "<C-,>", function()
-	edit_file("/lua/plugins/core.lua")
-end, { desc = "Edit core.lua" })
+map("n", "<C-,>", "<CMD>e $MYVIMRC<CR>", { desc = "Edit core.lua" })
 map("n", "<Leader>zc", function()
-	edit_file("/lua/plugins/core.lua")
+  edit_file "/lua/plugins/core.lua"
 end, { desc = "Edit core.lua" })
 map("n", "<Leader>zm", function()
-	edit_file("/lua/mappings.lua")
+  edit_file "/lua/mappings.lua"
 end, { desc = "Edit mappings.lua" })
 map("n", "<Leader>zo", function()
-	edit_file("/lua/options.lua")
+  edit_file "/lua/options.lua"
 end, { desc = "Edit options.lua" })
 
-map("n", "<leader>zz", "<CMD>colo randomhue<CR>", { desc = "Randomhue" })
+map("n", "<LocalLeader>t", "<CMD>colo randomhue<CR>", { desc = "Randomhue" })
 
 -- c++
 -- map({ "i", "n" }, "<M-o>", "<CMD>ClangdSwitchSourceHeader<CR>")

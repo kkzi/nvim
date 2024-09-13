@@ -1,3 +1,6 @@
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
 local o = vim.o
 o.guifont = "Sarasa Fixed SC Nerd Font:h12"
 o.autochdir = false
@@ -6,6 +9,7 @@ o.ignorecase = true
 o.number = true
 o.relativenumber = true
 o.list = false
+o.wrap = true
 o.cursorlineopt = "both"
 o.shortmess = "I"
 o.tabstop = 4
