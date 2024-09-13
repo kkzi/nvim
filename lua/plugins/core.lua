@@ -8,17 +8,8 @@ return {
 		end,
 	},
 	{
-		"famiu/bufdelete.nvim",
-		keys = {
-			{
-				"<A-w>",
-				function()
-					require("bufdelete").bufwipeout(0, false)
-				end,
-				mode = "",
-				desc = "Close current buffer",
-			},
-		},
+		"marklcrns/vim-smartq",
+		keys = { { "<A-w>", "<Plug>(smartq_this)", desc = "Telescope find files" } },
 	},
 	{
 		"echasnovski/mini.clue",
@@ -26,33 +17,20 @@ return {
 			local miniclue = require("mini.clue")
 			miniclue.setup({
 				triggers = {
-					-- Leader triggers
 					{ mode = "n", keys = "<Leader>" },
 					{ mode = "x", keys = "<Leader>" },
-
-					-- Built-in completion
 					{ mode = "i", keys = "<C-x>" },
-
-					-- `g` key
 					{ mode = "n", keys = "g" },
 					{ mode = "x", keys = "g" },
-
-					-- Marks
 					{ mode = "n", keys = "'" },
 					{ mode = "n", keys = "`" },
 					{ mode = "x", keys = "'" },
 					{ mode = "x", keys = "`" },
-
-					-- Registers
 					{ mode = "n", keys = '"' },
 					{ mode = "x", keys = '"' },
 					{ mode = "i", keys = "<C-r>" },
 					{ mode = "c", keys = "<C-r>" },
-
-					-- Window commands
 					{ mode = "n", keys = "<C-w>" },
-
-					-- `z` key
 					{ mode = "n", keys = "z" },
 					{ mode = "x", keys = "z" },
 				},
@@ -83,21 +61,21 @@ return {
 			local tree = require("neo-tree.command")
 			return {
 				{
-					"<leader>fe",
+					"<Leader>fe",
 					function()
 						tree.execute({ action = "show", toggle = true, position = "left", dir = "." })
 					end,
 					desc = "Toggle explorer",
 				},
 				{
-					"<leader>fH",
+					"<Leader>fH",
 					function()
 						tree.execute({ action = "show", toggle = false, position = "left", dir = "~" })
 					end,
 					desc = "Explorer Home",
 				},
 				{
-					"<leader>fE",
+					"<Leader>fE",
 					function()
 						vim.cmd("cd %:p:h")
 						tree.execute({ action = "show", focus = true, position = "left" })
@@ -136,8 +114,8 @@ return {
 			return {
 				{ "<TAB>", "<Plug>(cokeline-focus-next)", desc = "Next buffer" },
 				{ "<S-TAB>", "<Plug>(cokeline-focus-prev)", desc = "Prev buffer" },
-				{ "<leader>bb", "<Plug>(cokeline-pick-focus)", desc = "Pick buffer" },
-				{ "<leader>bd", "<Plug>(cokeline-pick-close)", desc = "Close buffer" },
+				{ "<Leader>b", "<Plug>(cokeline-pick-focus)", desc = "Pick buffer" },
+				{ "<Leader>c", "<Plug>(cokeline-pick-close)", desc = "Close buffer" },
 			}
 		end,
 	},
@@ -158,7 +136,7 @@ return {
 						"filename",
 						file_status = true, -- Displays file status (readonly status, modified status)
 						newfile_status = false, -- Display new file status (new file means no write after created)
-						path = 1, -- 0: Just the filename 1: Relative path 2: Absolute path
+						path = 2, -- 0: Just the filename 1: Relative path 2: Absolute path
 						-- 3: Absolute path, with tilde as the home directory
 						-- 4: Filename and parent dir, with tilde as the home directory
 						shorting_target = 40, -- Shortens path to leave 40 spaces in the window
@@ -179,22 +157,8 @@ return {
 			autochdir = true,
 		},
 		keys = {
-			{
-				"<A-`>",
-				function()
-					vim.cmd("ToggleTerm")
-				end,
-				mode = { "n", "i", "t" },
-				desc = "Show terminal",
-			},
-			-- {
-			-- 	"<Esc>",
-			-- 	function()
-			-- 		vim.cmd("ToggleTerm")
-			-- 	end,
-			-- 	mode = { "t" },
-			-- 	desc = "Hide terminal",
-			-- },
+			{ "<A-`>", "<CMD>ToggleTerm<CR>", mode = { "n", "i", "t" }, desc = "Show terminal" },
+			{ "<Esc>", "<CMD>ToggleTerm<CR>", mode = { "t" }, desc = "Hide terminal" },
 		},
 	},
 
@@ -214,7 +178,7 @@ return {
 			"hrsh7th/vim-vsnip",
 			"rafamadriz/friendly-snippets",
 		},
-		opts = function()
+		config = function()
 			local feedkey = function(key, mode)
 				vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
 			end
@@ -225,7 +189,7 @@ return {
 					and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 			end
 			local cmp = require("cmp")
-			return {
+			cmp.setup({
 				formatting = {
 					format = function(_, item)
 						local MAX_LABEL_WIDTH = 64
@@ -289,9 +253,10 @@ return {
 					{ name = "buffer" },
 					{ name = "path" },
 				}),
-			}
+			})
 		end,
 	},
+	{ "gelguy/wilder.nvim", opts = { modes = { ":", "?", "/" } } },
 
 	{ "echasnovski/mini.pairs", opts = {} },
 
@@ -302,7 +267,6 @@ return {
 			"neovim/nvim-lspconfig",
 		},
 		config = function()
-			-- add binaries installed by mason.nvim to path
 			local is_windows = vim.fn.has("win32") ~= 0
 			local sep = is_windows and "\\" or "/"
 			local delim = is_windows and ";" or ":"
@@ -327,8 +291,7 @@ return {
 		cmd = { "ConformInfo" },
 		keys = {
 			{
-				-- Customize or remove this keymap to your liking
-				"<leader>fm",
+				"<Leader>fm",
 				function()
 					require("conform").format({ async = true, lsp_fallback = true })
 				end,
@@ -336,13 +299,8 @@ return {
 				desc = "Format buffer",
 			},
 		},
-		-- This will provide type hinting with LuaLS
-		---@module "conform"
-		---@type conform.setupOpts
 		opts = {
 			notify_on_error = true,
-
-			-- Define your formatters
 			formatters_by_ft = {
 				lua = { "stylua" },
 				python = { "isort", "black" },
@@ -350,13 +308,10 @@ return {
 				c = { "clang_format" },
 				cpp = { "clang_format" },
 			},
-			-- Set default options
 			default_format_opts = {
 				lsp_format = "fallback",
 			},
-			-- Set up format-on-save
 			format_on_save = { timeout_ms = 500 },
-			-- Customize formatters
 			formatters = {
 				shfmt = {
 					prepend_args = { "-i", "2" },
@@ -367,7 +322,6 @@ return {
 			},
 		},
 		init = function()
-			-- If you want the formatexpr, here is the place to set it
 			vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
 		end,
 	},
@@ -383,12 +337,6 @@ return {
 		"kylechui/nvim-surround",
 		event = "VeryLazy",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-treesitter/nvim-treesitter-textobjects" },
-
-		-- config = function()
-		-- 	require("nvim-surround").setup({
-		-- 		-- Configuration here, or leave empty to use defaults
-		-- 	})
-		-- end,
 		opts = {},
 	},
 
@@ -406,12 +354,12 @@ return {
 		keys = function()
 			local tb = require("telescope.builtin")
 			return {
-				{ "<leader>ff", tb.find_files, desc = "Telescope find files" },
-				{ "<leader>fo", tb.oldfiles, desc = "Telescope find recent files" },
-				{ "<leader>fb", tb.buffers, desc = "Telescope buffers" },
-				{ "<leader>fc", tb.commands, desc = "Telescope commands" },
-				{ "<leader>ft", tb.colorscheme, desc = "Telescope colorscheme" },
-				{ "<leader>fk", tb.keymaps, desc = "Telescope keymap" },
+				{ "<Leader>ff", tb.find_files, desc = "Telescope find files" },
+				{ "<Leader>fo", tb.oldfiles, desc = "Telescope find recent files" },
+				{ "<Leader>fb", tb.buffers, desc = "Telescope buffers" },
+				{ "<Leader>fc", tb.commands, desc = "Telescope commands" },
+				{ "<Leader>ft", tb.colorscheme, desc = "Telescope colorscheme" },
+				{ "<Leader>fk", tb.keymaps, desc = "Telescope keymap" },
 			}
 		end,
 	},
@@ -419,5 +367,9 @@ return {
 	{
 		"sindrets/diffview.nvim",
 		opts = {},
+		keys = {
+			{ "<Leader>gd", "<CMD>DiffviewOpen<CR>", desc = "Open diffview" },
+			{ "<Leader>gc", "<CMD>DiffviewClose<CR>", desc = "Close diffview" },
+		},
 	},
 }
