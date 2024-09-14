@@ -6,7 +6,8 @@ local path_package = vim.fn.stdpath("data") .. "/site/"
 local mini_path = path_package .. 'pack/deps/start/mini.nvim'
 if not vim.loop.fs_stat(path_package) then
 	vim.cmd('echo "Installing `mini.nvim`" | redraw')
-	local clone_cmd = { "git", "clone", "--depth=1", "--filter=blob:none", "https://github.com/echasnovski/mini.nvim", mini_path }
+	local clone_cmd = { "git", "clone", "--depth=1", "--filter=blob:none", "https://github.com/echasnovski/mini.nvim",
+		mini_path }
 	vim.fn.system(clone_cmd)
 	vim.cmd("packadd mini.nvim | helptags ALL")
 	vim.cmd('echo "Installed `mini.nvim`" | redraw')
@@ -94,7 +95,7 @@ later(function()
 				miniclue.gen_clues.windows(),
 				miniclue.gen_clues.z(),
 			},
-			window = { delay = 250 },
+			window = { delay = 100 },
 		})
 	end)();
 	(function()
@@ -146,8 +147,16 @@ later(function()
 		addkey({ "i", "n" }, "<A-w>", "<Plug>(smartq_this)", { desc = "Next buffer" })
 	end)();
 	(function()
-		adddep({ source = "gelguy/wilder.nvim" })
-		require("wilder").setup({ modes = { ":", "?", "/" } })
+		-- adddep({ source = "gelguy/wilder.nvim" })
+		-- require("wilder").setup({ modes = { ":", "?", "/" } })
+
+		adddep({ source = "vzze/cmdline.nvim" })
+		require('cmdline')({
+			window = { matchFuzzy = true, offset = 1, debounceMs = 10 },
+			hl = { default = "Pmenu", selection = "PmenuSel", directory = "Directory", substr = "LineNr" },
+			column = { maxNumber = 6, minWidth = 20 },
+			binds = { next = "<Tab>", back = "<S-Tab>" }
+		})
 	end)();
 	(function()
 		adddep({ source = "sindrets/diffview.nvim" })
@@ -263,7 +272,7 @@ later(function()
 				"hrsh7th/cmp-nvim-lsp",
 				"hrsh7th/cmp-buffer",
 				"hrsh7th/cmp-path",
-				"hrsh7th/cmp-cmdline",
+				-- "hrsh7th/cmp-cmdline",
 				"hrsh7th/nvim-cmp",
 				"hrsh7th/cmp-vsnip",
 				"hrsh7th/vim-vsnip",
@@ -357,5 +366,5 @@ later(function()
 		})
 		addkey("n", "<Leader>fm", function() conform.format({ async = true, lsp_fallback = true }) end,
 			{ desc = "Format buffer" })
-	end)()
+	end)();
 end)
