@@ -1,5 +1,5 @@
-local path_package = vim.fn.stdpath("data") .. "/site/"
-local mini_path = path_package .. "pack/deps/start/mini.nvim"
+local path_package = vim.fn.stdpath("data")
+local mini_path = path_package
 if not vim.loop.fs_stat(mini_path) then
 	vim.cmd('echo "Installing `mini.nvim`" | redraw')
 	local clone_cmd = { "git", "clone", "--filter=blob:none", "https://github.com/echasnovski/mini.nvim", mini_path }
@@ -50,13 +50,13 @@ later(function()
 
 	require("mini.surround").setup({
 		mappings = {
-			add = "ysa", -- Add surrounding in Normal and Visual modes
-			delete = "yd", -- Delete surrounding
-			find = "yf", -- Find surrounding (to the right)
-			find_left = "yF", -- Find surrounding (to the left)
-			highlight = "yh", -- Highlight surrounding
-			replace = "yc", -- Replace surrounding
-			update_n_lines = "ysn", -- Update `n_lines`
+			add = "\\s", -- Add surrounding in Normal and Visual modes
+			delete = "\\d", -- Delete surrounding
+			find = "\\f", -- Find surrounding (to the right)
+			find_left = "\\F", -- Find surrounding (to the left)
+			highlight = "\\h", -- Highlight surrounding
+			replace = "\\c", -- Replace surrounding
+			update_n_lines = "\\sn", -- Update `n_lines`
 			suflix_last = "l", -- Suffix to search with "prev" method
 			suffix_next = "n", -- Suffix to search with "next" method
 		},
@@ -66,6 +66,7 @@ later(function()
 		miniclue.setup({
 			triggers = {
 				{ mode = "n", keys = "<Leader>" },
+				{ mode = "n", keys = "<LocalLeader>" },
 				{ mode = "x", keys = "<Leader>" },
 				{ mode = "i", keys = "<C-x>" },
 				{ mode = "n", keys = "g" },

@@ -1,3 +1,6 @@
+vim.g.mapleader = ' '
+vim.g.localmapleader = '\\'
+
 local o = vim.o
 o.guifont = "Sarasa Fixed SC Nerd Font:h12"
 o.autochdir = false
