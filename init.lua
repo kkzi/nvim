@@ -1,8 +1,11 @@
-local path_package = vim.fn.stdpath("data")
-local mini_path = path_package
-if not vim.loop.fs_stat(mini_path) then
+require("options")
+require("mappings")
+-- require("autocmds")
+
+local path_package = vim.fn.stdpath("data") .. "/site/"
+if not vim.loop.fs_stat(path_package) then
 	vim.cmd('echo "Installing `mini.nvim`" | redraw')
-	local clone_cmd = { "git", "clone", "--filter=blob:none", "https://github.com/echasnovski/mini.nvim", mini_path }
+	local clone_cmd = { "git", "clone", "--depth=1", "--filter=blob:none", "https://github.com/echasnovski/mini.nvim" }
 	vim.fn.system(clone_cmd)
 	vim.cmd("packadd mini.nvim | helptags ALL")
 	vim.cmd('echo "Installed `mini.nvim`" | redraw')
@@ -15,12 +18,13 @@ local addkey = vim.keymap.set
 -- local delkey = vim.keymap.del
 
 now(function()
+	vim.cmd("colo randomhue")
+
 	require("mini.notify").setup()
 	vim.notify = require("mini.notify").make_notify()
 
 	require("mini.basics").setup()
 	require("mini.align").setup()
-	require("mini.icons").setup()
 	require("mini.statusline").setup()
 	require("mini.pairs").setup()
 
@@ -31,32 +35,23 @@ now(function()
 			animation = indent.gen_animation.quadratic({ easing = "out", duration = 10, unit = "step" }),
 		},
 	})
-
-	require("options")
-	require("mappings")
-	vim.cmd("colo randomhue")
-
-	local augroup = vim.api.nvim_create_augroup("vimrc", { clear = true })
-	vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-		group = augroup,
-		pattern = { "init.lua", "options.lua", "mappings.lua" },
-		command = "source $MYVIMRC",
-	})
 end)
 
 later(function()
-	require("mini.comment").setup()
-	require("mini.pick").setup()
+	-- (function()
+	-- 	require("mini.pick").setup()
+	-- 	addkey("n", "<Leader>fp", "<CMD>Pick files<CR>", { desc = "Pick files" })
+	-- end)()
 
 	require("mini.surround").setup({
 		mappings = {
-			add = "\\s", -- Add surrounding in Normal and Visual modes
+			add = "\\s",   -- Add surrounding in Normal and Visual modes
 			delete = "\\d", -- Delete surrounding
-			find = "\\f", -- Find surrounding (to the right)
+			find = "\\f",  -- Find surrounding (to the right)
 			find_left = "\\F", -- Find surrounding (to the left)
 			highlight = "\\h", -- Highlight surrounding
 			replace = "\\c", -- Replace surrounding
-			update_n_lines = "\\sn", -- Update `n_lines`
+			update_n_lines = "\\n", -- Update `n_lines`
 			suflix_last = "l", -- Suffix to search with "prev" method
 			suffix_next = "n", -- Suffix to search with "next" method
 		},
@@ -65,8 +60,8 @@ later(function()
 		local miniclue = require("mini.clue")
 		miniclue.setup({
 			triggers = {
-				{ mode = "n", keys = "<Leader>" },
 				{ mode = "n", keys = "<LocalLeader>" },
+				{ mode = "n", keys = "<Leader>" },
 				{ mode = "x", keys = "<Leader>" },
 				{ mode = "i", keys = "<C-x>" },
 				{ mode = "n", keys = "g" },
@@ -77,6 +72,8 @@ later(function()
 				{ mode = "x", keys = "`" },
 				{ mode = "n", keys = '"' },
 				{ mode = "x", keys = '"' },
+				{ mode = "n", keys = "," },
+				{ mode = "x", keys = "," },
 				{ mode = "i", keys = "<C-r>" },
 				{ mode = "c", keys = "<C-r>" },
 				{ mode = "n", keys = "<C-w>" },
@@ -85,6 +82,10 @@ later(function()
 			},
 			clues = {
 				-- Enhance this by adding descriptions for <Leader> mapping groups
+				{ mode = "n", keys = "<Leader>f", desc = "Find / File" },
+				{ mode = "n", keys = "<Leader>g", desc = "Git  / Go to" },
+				{ mode = "n", keys = "<Leader>b", desc = "Buffer" },
+				{ mode = "n", keys = "<Leader>z", desc = "Misc." },
 				miniclue.gen_clues.builtin_completion(),
 				miniclue.gen_clues.g(),
 				miniclue.gen_clues.marks(),
@@ -96,24 +97,28 @@ later(function()
 		})
 	end)();
 	(function()
+		adddep({ source = "akinsho/toggleterm.nvim" })
+		require("toggleterm").setup({ direction = "float" })
+		addkey({ "n", "i", "v", "t" }, "<A-`>", "<CMD>ToggleTerm<CR>", { desc = "Toggle terminal" })
+		addkey({ "t" }, "<ESC>", "<CMD>ToggleTerm<CR>", { desc = "Hide terminal" })
+	end)();
+	(function()
+		adddep({ source = "nvim-tree/nvim-web-devicons" })
+		require("nvim-web-devicons").setup({ color_icons = false, })
+	end)();
+	(function()
 		adddep({
 			source = "willothy/nvim-cokeline",
-			depends = { "nvim-lua/plenary.nvim" },
-			hooks = {
-				post_checkout = function()
-					echo("hello")
-				end,
-			},
+			depends = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
 		})
 		require("cokeline").setup({
 			sidebar = {
-				-- filetype = { "neo-tree" },
 				components = { { text = " Explorer" } },
 			},
 			default_hl = {
 				bg = function(buffer)
 					local hlgroups = require("cokeline.hlgroups")
-					return buffer.is_focused and "#CCCC00" or hlgroups.get_hl_attr("ColorColumn", "bg")
+					return buffer.is_focused and "#71DEC1" or hlgroups.get_hl_attr("ColorColumn", "bg")
 				end,
 				fg = function(buffer)
 					local hlgroups = require("cokeline.hlgroups")
@@ -121,11 +126,19 @@ later(function()
 				end,
 			},
 		})
-		local coke = require("cokeline.mappings")
+		-- local coke = require("cokeline.mappings")
 		addkey("n", "<TAB>", "<Plug>(cokeline-focus-next)", { desc = "Next buffer" })
 		addkey("n", "<S-TAB>", "<Plug>(cokeline-focus-prev)", { desc = "Prev buffer" })
-		addkey("n", "<Leader>b", "<Plug>(cokeline-pick-focus)", { desc = "Pick buffer" })
-		addkey("n", "<Leader>c", "<Plug>(cokeline-pick-close)", { desc = "Close buffer" })
+		addkey("n", "<Leader>B", "<Plug>(cokeline-pick-focus)", { desc = "Buffer pick focus" })
+		addkey("n", "<Leader>C", "<Plug>(cokeline-pick-close)", { desc = "Buffer pick close" })
+		for i = 1, 9 do
+			addkey(
+				"n",
+				("<Leader>b%s"):format(i),
+				("<Plug>(cokeline-focus-%s)"):format(i),
+				{ desc = ("Buffer goto %s"):format(i) }
+			)
+		end
 	end)();
 	(function()
 		adddep({ source = "marklcrns/vim-smartq" })
@@ -146,19 +159,29 @@ later(function()
 			depends = {
 				"nvim-lua/plenary.nvim",
 				"MunifTanjim/nui.nvim",
+				"nvim-tree/nvim-web-devicons",
 			},
 		})
-		local tree = require("neo-tree.command")
-		addkey("n", "<Leader>fe", function()
-			tree.execute({ action = "show", toggle = true, position = "left", dir = "." })
-		end, { desc = "Toggle explorer" })
-		addkey("n", "<Leader>fH", function()
-			tree.execute({ action = "show", toggle = false, position = "left", dir = "~" })
-		end, { desc = "Explorer Home" })
-		addkey("n", "<Leader>fE", function()
-			vim.cmd("cd %:p:h")
-			tree.execute({ action = "show", focus = true, position = "left" })
-		end, { desc = "Reload neotree" })
+		require("neo-tree").setup({
+			filesystem = {
+				filtered_items = {
+					visible = true,
+					show_hidden_count = true,
+					hide_dotfiles = false,
+					hide_gitignored = false,
+				},
+				follow_current_file = {
+					enabled = true,
+					leave_dirs_open = false,
+				},
+			},
+			buffers = { follow_current_file = { enable = true } },
+		})
+		-- local tree = require("neo-tree.command")
+		addkey("n", "<Leader>fe", "<CMD>Neotree action=focus dir=.<CR>", { desc = "Explorer focus" })
+		addkey("n", "<Leader>fH", "<CMD>Neotree action=focus dir=~<CR>", { desc = "Explorer Home" })
+		addkey("n", "<Leader>fr", "<CMD>Neotree action=focus reveal<CR>", { desc = "Explorer focus reveal " })
+		addkey("n", "<Leader>fR", "<CMD>Neotree action=show reveal<CR>", { desc = "Explorer Reveal" })
 	end)();
 	(function()
 		adddep({
@@ -169,28 +192,27 @@ later(function()
 		local sep = is_windows and "\\" or "/"
 		local delim = is_windows and ";" or ":"
 		vim.env.PATH = table.concat({ vim.fn.stdpath("data"), "mason", "bin" }, sep) .. delim .. vim.env.PATH
-
-		require("mason").setup({
-			ui = { border = "single" },
-		})
-		require("mason-lspconfig").setup({
-			ensure_installed = { "lua_ls", "clangd", "neocmake", "zls" },
-		})
-		require("mason-lspconfig").setup_handlers({
+		require("mason").setup({ ui = { border = "single" } })
+		local lspconfig = require("lspconfig")
+		local handlers = {
 			function(server_name) -- default handler (optional)
 				require("lspconfig")[server_name].setup({})
 			end,
-		})
-		require("lspconfig").lua_ls.setup({
-			settings = {
-				Lua = {
-					diagnostics = {
-						globals = { "vim" },
-					},
-				},
-			},
-		})
+			["lua_ls"] = function()
+				lspconfig.lua_ls.setup({ settings = { Lua = { diagnostics = { globals = { "vim" }, }, }, }, })
+			end,
+			["clangd"] = function()
+				lspconfig.clangd.setup { cmd = { 'clangd', "--fallback-style=Microsoft" } }
+			end
+		}
+		require("mason-lspconfig").setup({ handlers = handlers })
+		addkey("n", "<A-o>", "<CMD>ClangdSwitchSourceHeader<CR>", { desc = "Switch between source/header" })
+		addkey("n", "<A-p>", "<CMD>ClangdShowSymbolInfo<CR>", { desc = "Show symbol info" })
 	end)()
+	-- ; (function()
+	-- 	adddep({ source = "p00f/clangd_extensions.nvim" })
+	-- 	require("clangd_extensions").setup({})
+	-- end)()
 
 	adddep({
 		source = "nvim-treesitter/nvim-treesitter",
@@ -211,15 +233,27 @@ later(function()
 				-- layout_strategy = 'vertical',
 				layout_config = { prompt_position = "top" },
 				sorting_strategy = "ascending",
+				preview = false,
+				mappings = {
+					i = {
+						["<Tab>"] = "move_selection_next",
+						["<S-Tab>"] = "move_selection_previous",
+						["<ESC>"] = "close",
+					},
+					n = {
+						["<Tab>"] = "move_selection_next",
+						["<S-Tab>"] = "move_selection_previous",
+						["<ESC>"] = "close",
+					},
+				},
 			},
 		})
-		local tb = require("telescope.builtin")
-		addkey("n", "<Leader>ff", tb.find_files, { desc = "Telescope find files" })
-		addkey("n", "<Leader>fo", tb.oldfiles, { desc = "Telescope find recent files" })
-		addkey("n", "<Leader>fb", tb.buffers, { desc = "Telescope buffers" })
-		addkey("n", "<Leader>fc", tb.commands, { desc = "Telescope commands" })
-		addkey("n", "<Leader>ft", tb.colorscheme, { desc = "Telescope colorscheme" })
-		addkey("n", "<Leader>fk", tb.keymaps, { desc = "Telescope keymap" })
+		addkey("n", "<Leader>ff", "<CMD>Telescope find_files<CR>", { desc = "Telescope find files" })
+		addkey("n", "<Leader>fo", "<CMD>Telescope oldfiles<CR>", { desc = "Telescope find recent files" })
+		addkey("n", "<Leader>fb", "<CMD>Telescope buffers<CR>", { desc = "Telescope buffers" })
+		addkey("n", "<Leader>fc", "<CMD>Telescope commands<CR>", { desc = "Telescope commands" })
+		addkey("n", "<Leader>ft", "<CMD>Telescope colorscheme<CR>", { desc = "Telescope colorscheme" })
+		addkey("n", "<Leader>fk", "<CMD>Telescope keymaps<CR>", { desc = "Telescope keymap" })
 	end)();
 	(function()
 		adddep({
@@ -292,7 +326,7 @@ later(function()
 						-- elseif has_words_before() then
 						-- 	cmp.complete()
 					else
-						fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+						fallback()
 					end
 				end, { "i", "s" }),
 				["<S-Tab>"] = cmp.mapping(function()
@@ -315,25 +349,12 @@ later(function()
 		adddep({ source = "stevearc/conform.nvim" })
 		local conform = require("conform")
 		conform.setup({
-			formatters_by_ft = {
-				lua = { "stylua" },
-				python = { "isort", "black" },
-				javascript = { "prettierd", "prettier", stop_after_first = true },
-				c = { "clang_format" },
-				cpp = { "clang_format" },
-			},
-			formatters = {
-				shfmt = {
-					prepend_args = { "-i", "2" },
-				},
-				clang_format = {
-					prepend_args = { "--style=file", "--fallback-style=Microsoft" },
-				},
+			format_on_save = {
+				lsp_format = "fallback",
+				timeout_ms = 500,
 			},
 		})
-
-		addkey("n", "<Leader>fm", function()
-			conform.format({ async = true, lsp_fallback = true })
-		end, { desc = "Format buffer" })
+		addkey("n", "<Leader>fm", function() conform.format({ async = true, lsp_fallback = true }) end,
+			{ desc = "Format buffer" })
 	end)()
 end)

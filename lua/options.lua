@@ -8,6 +8,7 @@ o.cursorline = true
 o.ignorecase = true
 o.number = true
 o.relativenumber = true
+o.wrap = true
 o.list = false
 o.cursorlineopt = "both"
 o.shortmess = "I"
