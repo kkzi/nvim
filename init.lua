@@ -215,7 +215,11 @@ later(function()
 				lspconfig.clangd.setup { cmd = { 'clangd', "--fallback-style=Microsoft" } }
 			end
 		}
-		require("mason-lspconfig").setup({ handlers = handlers })
+		require("mason-lspconfig").setup({
+			ensure_installed = { "lua_ls", "clangd" },
+			automatic_installation = true,
+			handlers = handlers
+		})
 		addkey("n", "<A-o>", "<CMD>ClangdSwitchSourceHeader<CR>", { desc = "Switch between source/header" })
 		addkey("n", "<A-p>", "<CMD>ClangdShowSymbolInfo<CR>", { desc = "Show symbol info" })
 	end)()
