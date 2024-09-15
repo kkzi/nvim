@@ -266,6 +266,7 @@ later(function()
 		addkey("n", "<Leader>fc", "<CMD>Telescope commands<CR>", { desc = "Telescope commands" })
 		addkey("n", "<Leader>ft", "<CMD>Telescope colorscheme<CR>", { desc = "Telescope colorscheme" })
 		addkey("n", "<Leader>fk", "<CMD>Telescope keymaps<CR>", { desc = "Telescope keymap" })
+		addkey("n", "<Leader>gb", "<CMD>Telescope git_branches<CR>", { desc = "Telescope git branches" })
 	end)();
 	(function()
 		adddep({
