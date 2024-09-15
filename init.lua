@@ -234,7 +234,16 @@ later(function()
 		require("telescope").setup({
 			defaults = {
 				-- layout_strategy = 'vertical',
-				layout_config = { prompt_position = "top" },
+				borderchars = { "─", "│", "─", "│", '┌', '┐', '┘', '└' },
+				layout_config = {
+					prompt_position = "top",
+					horizontal = {
+						height = 0.8,
+						preview_cutoff = 40,
+						prompt_position = "top",
+						width = 0.5
+					},
+				},
 				sorting_strategy = "ascending",
 				preview = false,
 				mappings = {
