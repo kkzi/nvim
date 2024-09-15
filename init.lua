@@ -143,13 +143,6 @@ later(function()
 		end
 	end)();
 	(function()
-		adddep({ source = "marklcrns/vim-smartq" })
-		addkey({ "i", "n" }, "<A-w>", "<Plug>(smartq_this)", { desc = "Next buffer" })
-	end)();
-	(function()
-		-- adddep({ source = "gelguy/wilder.nvim" })
-		-- require("wilder").setup({ modes = { ":", "?", "/" } })
-
 		adddep({ source = "vzze/cmdline.nvim" })
 		require('cmdline')({
 			window = { matchFuzzy = true, offset = 1, debounceMs = 10 },
@@ -173,6 +166,7 @@ later(function()
 			},
 		})
 		require("neo-tree").setup({
+			window = { position = "float" },
 			filesystem = {
 				filtered_items = {
 					visible = true,
@@ -180,18 +174,13 @@ later(function()
 					hide_dotfiles = false,
 					hide_gitignored = false,
 				},
-				follow_current_file = {
-					enabled = true,
-					leave_dirs_open = false,
-				},
 			},
 			buffers = { follow_current_file = { enable = true } },
 		})
 		-- local tree = require("neo-tree.command")
-		addkey("n", "<Leader>fe", "<CMD>Neotree action=focus dir=.<CR>", { desc = "Explorer focus" })
 		addkey("n", "<Leader>fH", "<CMD>Neotree action=focus dir=~<CR>", { desc = "Explorer Home" })
-		addkey("n", "<Leader>fr", "<CMD>Neotree action=focus reveal<CR>", { desc = "Explorer focus reveal " })
-		addkey("n", "<Leader>fR", "<CMD>Neotree action=show reveal<CR>", { desc = "Explorer Reveal" })
+		addkey("n", "<Leader>fe", "<CMD>Neotree action=focus reveal reveal_force_cwd<CR>",
+			{ desc = "Explorer focus reveal " })
 	end)();
 	(function()
 		adddep({

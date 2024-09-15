@@ -26,6 +26,7 @@ addkey({ "c", "i" }, "<C-v>", "<C-r>+", {})
 addkey({ "n", "i", "v" }, "<C-s>", "<CMD>w<CR>", {})
 
 addkey("n", "<Leader>fd", "<CMD>cd %:p:h<CR>", { desc = "Chdir" })
+addkey({ "n", "i" }, "<A-w>", "<CMD>:bd<CR>", { desc = "Close buffer" })
 
 -- preference
 local edit_file = function(file)
