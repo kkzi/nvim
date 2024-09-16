@@ -28,7 +28,10 @@ now(function()
 	require("mini.basics").setup()
 	require("mini.align").setup()
 	require("mini.statusline").setup()
-	require("mini.pairs").setup()
+	require("mini.pairs").setup({
+		modes = { insert = true, command = true, terminal = false },
+		mappings = {},
+	})
 
 	local indent = require("mini.indentscope")
 	indent.setup({
@@ -95,7 +98,7 @@ later(function()
 				miniclue.gen_clues.windows(),
 				miniclue.gen_clues.z(),
 			},
-			window = { delay = 100 },
+			window = { delay = 100, config = { width = 48, border = 'single' } },
 		})
 	end)();
 	(function()
@@ -136,7 +139,7 @@ later(function()
 		for i = 1, 9 do
 			addkey(
 				"n",
-				("<Leader>b%s"):format(i),
+				("<A-%s>"):format(i),
 				("<Plug>(cokeline-focus-%s)"):format(i),
 				{ desc = ("Buffer goto %s"):format(i) }
 			)
@@ -267,6 +270,7 @@ later(function()
 		addkey("n", "<Leader>ft", "<CMD>Telescope colorscheme<CR>", { desc = "Telescope colorscheme" })
 		addkey("n", "<Leader>fk", "<CMD>Telescope keymaps<CR>", { desc = "Telescope keymap" })
 		addkey("n", "<Leader>gb", "<CMD>Telescope git_branches<CR>", { desc = "Telescope git branches" })
+		addkey("n", "gd", "<CMD>Telescope lsp_definitions<CR>", { desc = "Telescope go to definition" })
 	end)();
 	(function()
 		adddep({
