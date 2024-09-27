@@ -5,6 +5,8 @@ addkey("n", "<ESC>", "<CMD>nohl<CR>", { desc = "clear hilights" })
 
 -- map("i", "jk", "<esc>")
 addkey("n", ";", ":")
+addkey("n", ">", ">>")
+addkey("n", "<", "<<")
 addkey("n", "gh", "_", { desc = "Go to line start" })
 addkey("n", "gl", "$", { desc = "Go to line end" })
 addkey("n", "ge", "G", { desc = "Go to last line" })
