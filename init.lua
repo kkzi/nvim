@@ -212,20 +212,39 @@ later(function()
         })
         addkey("n", "<A-o>", "<CMD>ClangdSwitchSourceHeader<CR>", { desc = "Switch between source/header" })
         addkey("n", "<A-p>", "<CMD>ClangdShowSymbolInfo<CR>", { desc = "Show symbol info" })
-    end)()
+    end)();
     -- ; (function()
     -- 	adddep({ source = "p00f/clangd_extensions.nvim" })
     -- 	require("clangd_extensions").setup({})
     -- end)()
 
-    adddep({
-        source = "nvim-treesitter/nvim-treesitter",
-        hooks = {
-            post_checkout = function()
-                require("nvim-treesitter.install").update({ with_sync = true })()
-            end,
-        },
-    });
+    (function()
+        adddep({
+            source = "nvim-treesitter/nvim-treesitter",
+            hooks = {
+                post_checkout = function()
+                    require("nvim-treesitter.install").update({ with_sync = true })()
+                end,
+            },
+        });
+        require 'nvim-treesitter.configs'.setup {
+            ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc" },
+            sync_install = false,
+            auto_install = true,
+            ignore_install = {},
+            highlight = {
+                enable = true,
+                -- disable = function(lang, buf)
+                --     local max_filesize = 100 * 1024 -- 100 KB
+                --     local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+                --     if ok and stats and stats.size > max_filesize then
+                --         return true
+                --     end
+                -- end,
+                additional_vim_regex_highlighting = false,
+            },
+        }
+    end)();
     (function()
         adddep({
             source = "nvim-telescope/telescope.nvim",
