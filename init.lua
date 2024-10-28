@@ -71,8 +71,42 @@ require("lazy").setup({
 				},
 			},
 		},
+		{
+			"projekt0n/github-nvim-theme",
+			name = "github-theme",
+			lazy = false,
+			priority = 1000,
+			opts = function()
+				vim.cmd("colorscheme github_dark")
+				return {}
+			end,
+		},
 
 		{ "nvim-tree/nvim-web-devicons", opts = { color_icons = false } },
+		{
+			"nvim-neo-tree/neo-tree.nvim",
+			dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim", "nvim-tree/nvim-web-devicons" },
+			opts = {
+				window = { position = "left" },
+				filesystem = {
+					filtered_items = {
+						visible = true,
+						show_hidden_count = true,
+						hide_dotfiles = false,
+						hide_gitignored = false,
+					},
+				},
+				buffers = { follow_current_file = { enable = true } },
+			},
+			keys = {
+				{ "<Leader>H", "<CMD>Neotree action=focus dir=~<CR>", desc = "Explorer Home" },
+				{
+					"<Leader>e",
+					"<CMD>Neotree action=focus reveal reveal_force_cwd<CR>",
+					desc = "Explorer focus reveal ",
+				},
+			},
+		},
 
 		{
 			"echasnovski/mini.clue",
@@ -183,33 +217,10 @@ require("lazy").setup({
 		},
 
 		{
-			"nvim-neo-tree/neo-tree.nvim",
-			dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim", "nvim-tree/nvim-web-devicons" },
-			opts = {
-				window = { position = "float" },
-				filesystem = {
-					filtered_items = {
-						visible = true,
-						show_hidden_count = true,
-						hide_dotfiles = false,
-						hide_gitignored = false,
-					},
-				},
-				buffers = { follow_current_file = { enable = true } },
-			},
-			keys = {
-				{ "<Leader>H", "<CMD>Neotree action=focus dir=~<CR>", desc = "Explorer Home" },
-				{
-					"<Leader>e",
-					"<CMD>Neotree action=focus reveal reveal_force_cwd<CR>",
-					desc = "Explorer focus reveal ",
-				},
-			},
-		},
-
-		{
-			"williamboman/mason.nvim",
-			dependencies = { "williamboman/mason-lspconfig.nvim", "neovim/nvim-lspconfig" },
+			"neovim/nvim-lspconfig",
+			dependencies = { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim" },
+			cmd = "Mason",
+			build = ":MasonUpdate",
 			opts = function()
 				local is_windows = vim.fn.has("win32") ~= 0
 				local sep = is_windows and "\\" or "/"
@@ -233,6 +244,7 @@ require("lazy").setup({
 					automatic_installation = true,
 					handlers = handlers,
 				})
+				return {}
 			end,
 			keys = {
 				{ "<A-o>", "<CMD>ClangdSwitchSourceHeader<CR>", desc = "Switch between source/header", ft = { "cpp" } },
@@ -273,14 +285,14 @@ require("lazy").setup({
 					layout_config = {
 						prompt_position = "top",
 						horizontal = {
+							width = 0.9,
 							height = 0.8,
 							preview_cutoff = 40,
 							prompt_position = "top",
-							width = 0.5,
 						},
 					},
 					sorting_strategy = "ascending",
-					preview = false,
+					preview = true,
 					mappings = {
 						i = {
 							["<Tab>"] = "move_selection_next",
