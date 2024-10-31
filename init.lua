@@ -69,16 +69,6 @@ require("lazy").setup({
 				},
 			},
 		},
-		{
-			"projekt0n/github-nvim-theme",
-			name = "github-theme",
-			lazy = false,
-			priority = 1000,
-			opts = function()
-				vim.cmd("colorscheme github_dark")
-				return {}
-			end,
-		},
 
 		{ "nvim-tree/nvim-web-devicons", opts = { color_icons = false } },
 		{
@@ -222,7 +212,7 @@ require("lazy").setup({
 				{ "williamboman/mason.nvim", opts = {} },
 				{ "williamboman/mason-lspconfig.nvim", opts = {} },
 			},
-            lazy = false,
+			lazy = false,
 			cmd = "Mason",
 			build = ":MasonUpdate",
 			opts = {
@@ -263,7 +253,7 @@ require("lazy").setup({
 			opts = function()
 				require("nvim-treesitter.configs").setup({
 					-- ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc" },
-					sync_install = false,
+					sync_install = true,
 					auto_install = true,
 					ignore_install = {},
 					highlight = {
@@ -333,6 +323,7 @@ require("lazy").setup({
 				"hrsh7th/cmp-path",
 				-- "hrsh7th/cmp-cmdline",
 				"hrsh7th/nvim-cmp",
+				"hrsh7th/vim-vsnip",
 				"hrsh7th/cmp-vsnip",
 				"rafamadriz/friendly-snippets",
 			},
@@ -459,3 +450,6 @@ require("lazy").setup({
 		},
 	},
 })
+
+vim.cmd.colorscheme('retrobox')
+
