@@ -16,3 +16,4 @@ o.shortmess = "I"
 o.shiftwidth = 4
 o.tabstop = 4
 o.expandtab = true
+o.so = 7

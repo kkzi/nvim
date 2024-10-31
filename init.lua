@@ -27,8 +27,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- vim.cmd("colo randomhue")
-
 -- Setup lazy.nvim
 require("lazy").setup({
 	install = { colorscheme = { "habamax" } },
@@ -163,6 +161,7 @@ require("lazy").setup({
 		{
 			"willothy/nvim-cokeline",
 			dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
+			lazy = false,
 			opts = {
 				sidebar = {
 					components = { { text = " Explorer" } },
@@ -195,6 +194,7 @@ require("lazy").setup({
 				return keys
 			end,
 		},
+
 		{
 			"vzze/cmdline.nvim",
 			config = function()
@@ -218,39 +218,45 @@ require("lazy").setup({
 
 		{
 			"neovim/nvim-lspconfig",
-			dependencies = { "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim" },
+			dependencies = {
+				{ "williamboman/mason.nvim", opts = {} },
+				{ "williamboman/mason-lspconfig.nvim", opts = {} },
+			},
+            lazy = false,
 			cmd = "Mason",
 			build = ":MasonUpdate",
-			opts = function()
+			opts = {
+				{ ui = { border = "single" } },
+			},
+			config = function(_, opts)
 				local is_windows = vim.fn.has("win32") ~= 0
 				local sep = is_windows and "\\" or "/"
 				local delim = is_windows and ";" or ":"
 				vim.env.PATH = table.concat({ vim.fn.stdpath("data"), "mason", "bin" }, sep) .. delim .. vim.env.PATH
-				require("mason").setup({ ui = { border = "single" } })
+				require("mason").setup(opts)
 				local lspconfig = require("lspconfig")
-				local handlers = {
-					function(server_name) -- default handler (optional)
-						require("lspconfig")[server_name].setup({})
-					end,
-					["lua_ls"] = function()
-						lspconfig.lua_ls.setup({ settings = { Lua = { diagnostics = { globals = { "vim" } } } } })
-					end,
-					["clangd"] = function()
-						lspconfig.clangd.setup({ cmd = { "clangd", "--fallback-style=Microsoft" } })
-					end,
-				}
 				require("mason-lspconfig").setup({
 					ensure_installed = { "lua_ls", "clangd" },
 					automatic_installation = true,
-					handlers = handlers,
+					handlers = {
+						function(server_name) -- default handler (optional)
+							require("lspconfig")[server_name].setup({})
+						end,
+						["lua_ls"] = function()
+							lspconfig.lua_ls.setup({ settings = { Lua = { diagnostics = { globals = { "vim" } } } } })
+						end,
+						["clangd"] = function()
+							lspconfig.clangd.setup({ cmd = { "clangd", "--fallback-style=Microsoft" } })
+						end,
+					},
 				})
-				return {}
 			end,
 			keys = {
 				{ "<A-o>", "<CMD>ClangdSwitchSourceHeader<CR>", desc = "Switch between source/header", ft = { "cpp" } },
 				{ "<A-p>", "<CMD>ClangdShowSymbolInfo<CR>", desc = "Show symbol info", ft = { "cpp" } },
 			},
 		},
+
 		{
 			"nvim-treesitter/nvim-treesitter",
 			build = ":TSUpdate",
@@ -328,7 +334,6 @@ require("lazy").setup({
 				-- "hrsh7th/cmp-cmdline",
 				"hrsh7th/nvim-cmp",
 				"hrsh7th/cmp-vsnip",
-				"hrsh7th/vim-vsnip",
 				"rafamadriz/friendly-snippets",
 			},
 			opts = function()
