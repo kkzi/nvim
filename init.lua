@@ -1,15 +1,6 @@
 require("options")
 require("keymaps")
 
-local old_stdpath = vim.fn.stdpath
-local cfg_path = old_stdpath("config")
-vim.fn.stdpath = function(value)
-	if value == "data" then
-		return cfg_path .. "/data"
-	end
-	return old_stdpath(value)
-end
-
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -32,15 +23,16 @@ require("lazy").setup({
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
 	spec = {
-		{
-			"echasnovski/mini.notify",
-			opts = function()
-				vim.notify = require("mini.notify").make_notify()
-			end,
-		},
+		-- {
+		-- 	"echasnovski/mini.notify",
+		-- 	opts = function()
+		-- 		vim.notify = require("mini.notify").make_notify()
+		-- 	end,
+		-- },
 		{ "echasnovski/mini.basics", opts = {} },
 		{ "echasnovski/mini.align", opts = {} },
 		{ "echasnovski/mini.statusline", opts = {} },
+		{ "echasnovski/mini.bufremove", otps = {} },
 		{
 			"echasnovski/mini.pairs",
 			opts = {
@@ -106,6 +98,8 @@ require("lazy").setup({
 						{ mode = "n", keys = "<Leader>" },
 						{ mode = "x", keys = "<Leader>" },
 						{ mode = "i", keys = "<C-x>" },
+						{ mode = "n", keys = "y" },
+						{ mode = "n", keys = "m" },
 						{ mode = "n", keys = "g" },
 						{ mode = "x", keys = "g" },
 						{ mode = "n", keys = "'" },
@@ -148,42 +142,42 @@ require("lazy").setup({
 			},
 		},
 
-		{
-			"willothy/nvim-cokeline",
-			dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
-			lazy = false,
-			opts = {
-				sidebar = {
-					components = { { text = " Explorer" } },
-				},
-				default_hl = {
-					bg = function(buffer)
-						local hlgroups = require("cokeline.hlgroups")
-						return buffer.is_focused and "#71DEC1" or hlgroups.get_hl_attr("ColorColumn", "bg")
-					end,
-					fg = function(buffer)
-						local hlgroups = require("cokeline.hlgroups")
-						return buffer.is_focused and "#000000" or hlgroups.get_hl_attr("Normal", "fg")
-					end,
-				},
-			},
-			keys = function()
-				local keys = {
-					{ "<TAB>", "<Plug>(cokeline-focus-next)", desc = "Next buffer" },
-					{ "<S-TAB>", "<Plug>(cokeline-focus-prev)", desc = "Prev buffer" },
-					{ "<Leader>B", "<Plug>(cokeline-pick-focus)", desc = "Buffer pick focus" },
-					{ "<Leader>C", "<Plug>(cokeline-pick-close)", desc = "Buffer pick close" },
-				}
-				for i = 1, 9 do
-					keys[#keys + 1] = {
-						("<A-%s>"):format(i),
-						("<Plug>(cokeline-focus-%s)"):format(i),
-						desc = ("Buffer goto %s"):format(i),
-					}
-				end
-				return keys
-			end,
-		},
+		-- {
+		-- 	"willothy/nvim-cokeline",
+		-- 	dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
+		-- 	lazy = false,
+		-- 	opts = {
+		-- 		sidebar = {
+		-- 			components = { { text = " Explorer" } },
+		-- 		},
+		-- 		default_hl = {
+		-- 			bg = function(buffer)
+		-- 				local hlgroups = require("cokeline.hlgroups")
+		-- 				return buffer.is_focused and "#71DEC1" or hlgroups.get_hl_attr("ColorColumn", "bg")
+		-- 			end,
+		-- 			fg = function(buffer)
+		-- 				local hlgroups = require("cokeline.hlgroups")
+		-- 				return buffer.is_focused and "#000000" or hlgroups.get_hl_attr("Normal", "fg")
+		-- 			end,
+		-- 		},
+		-- 	},
+		-- 	keys = function()
+		-- 		local keys = {
+		-- 			{ "<TAB>", "<Plug>(cokeline-focus-next)", desc = "Next buffer" },
+		-- 			{ "<S-TAB>", "<Plug>(cokeline-focus-prev)", desc = "Prev buffer" },
+		-- 			{ "<Leader>B", "<Plug>(cokeline-pick-focus)", desc = "Buffer pick focus" },
+		-- 			{ "<Leader>C", "<Plug>(cokeline-pick-close)", desc = "Buffer pick close" },
+		-- 		}
+		-- 		for i = 1, 9 do
+		-- 			keys[#keys + 1] = {
+		-- 				("<A-%s>"):format(i),
+		-- 				("<Plug>(cokeline-focus-%s)"):format(i),
+		-- 				desc = ("Buffer goto %s"):format(i),
+		-- 			}
+		-- 		end
+		-- 		return keys
+		-- 	end,
+		-- },
 
 		{
 			"vzze/cmdline.nvim",
@@ -306,6 +300,7 @@ require("lazy").setup({
 			keys = {
 				{ "<Leader>f", "<CMD>Telescope find_files<CR>", desc = "Telescope find files" },
 				{ "<Leader>h", "<CMD>Telescope oldfiles<CR>", desc = "Telescope find recent files" },
+				{ "<Leader>/", "<CMD>Telescope grep_string<CR>", desc = "Telescope find recent files" },
 				{ "<Leader>b", "<CMD>Telescope buffers<CR>", desc = "Telescope buffers" },
 				{ "<Leader>c", "<CMD>Telescope commands<CR>", desc = "Telescope commands" },
 				{ "<Leader>T", "<CMD>Telescope colorscheme<CR>", desc = "Telescope colorscheme" },
@@ -448,8 +443,9 @@ require("lazy").setup({
 				},
 			},
 		},
+		{ "j-hui/fidget.nvim", lazy = false, opts = {} },
+		{ "Civitasv/cmake-tools.nvim", opts = {} },
 	},
 })
 
-vim.cmd.colorscheme('retrobox')
-
+vim.cmd.colorscheme("retrobox")
