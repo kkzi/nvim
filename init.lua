@@ -23,27 +23,59 @@ require("lazy").setup({
 	install = { colorscheme = { "habamax" } },
 	checker = { enabled = false },
 	spec = {
-		-- {
-		-- 	"echasnovski/mini.notify",
-		-- 	opts = function()
-		-- 		vim.notify = require("mini.notify").make_notify()
-		-- 	end,
-		-- },
+		{
+			"echasnovski/mini.notify",
+			opts = function()
+				vim.notify = require("mini.notify").make_notify()
+			end,
+		},
 		{ "echasnovski/mini.basics", opts = {} },
 		{ "echasnovski/mini.align", opts = {} },
-		{ "echasnovski/mini.statusline", opts = {} },
+		{
+			"echasnovski/mini.statusline",
+			opts = function()
+				local status = require("mini.statusline")
+				return {
+					content = {
+						active = function()
+							local mode, mode_hl = status.section_mode({ trunc_width = 120 })
+							local git = status.section_git({ trunc_width = 40 })
+							local diff = status.section_diff({ trunc_width = 75 })
+							local diagnostics = status.section_diagnostics({ trunc_width = 75 })
+							local lsp = status.section_lsp({ trunc_width = 75 })
+							local filename = status.section_filename({ trunc_width = 140 })
+							local fileinfo = function(args)
+								local filetype = vim.bo.filetype
+								local encoding = vim.bo.fileencoding or vim.bo.encoding
+								local format = vim.bo.fileformat
+								return string.format(
+									"%s %s %s",
+									string.upper(filetype),
+									string.upper(encoding),
+									string.upper(format)
+								)
+							end
+							local search = status.section_searchcount({ trunc_width = 120 })
+							return status.combine_groups({
+								{ hl = mode_hl, strings = { string.upper(mode) } },
+								{ hl = "statusDevinfo", strings = { git, diff, diagnostics, lsp } },
+								"%=",
+								{ hl = "statusFilename", strings = { filename } },
+								"%=",
+								{ hl = mode_hl, strings = { search } },
+								{ hl = "statusFileinfo", strings = { "%3l,%-3L", fileinfo() } },
+							})
+						end,
+					},
+				}
+			end,
+		},
 		{ "echasnovski/mini.bufremove", otps = {} },
 		{
 			"echasnovski/mini.pairs",
 			opts = {
-				modes = { insert = true, command = true, terminal = false },
-				mappings = {},
+				modes = { insert = true, command = true, terminal = true },
 			},
-		},
-		{
-			"lukas-reineke/indent-blankline.nvim",
-			main = "ibl",
-			opts = { enabled = true, indent = { char = "│", tab_char = "│" } },
 		},
 		{
 			"echasnovski/mini.surround",
@@ -61,33 +93,6 @@ require("lazy").setup({
 				},
 			},
 		},
-
-		{ "nvim-tree/nvim-web-devicons", opts = { color_icons = false } },
-		{
-			"nvim-neo-tree/neo-tree.nvim",
-			dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim", "nvim-tree/nvim-web-devicons" },
-			opts = {
-				window = { position = "left" },
-				filesystem = {
-					filtered_items = {
-						visible = true,
-						show_hidden_count = true,
-						hide_dotfiles = false,
-						hide_gitignored = false,
-					},
-				},
-				buffers = { follow_current_file = { enable = true } },
-			},
-			keys = {
-				{ "<Leader>H", "<CMD>Neotree action=focus dir=~<CR>", desc = "Explorer Home" },
-				{
-					"<Leader>e",
-					"<CMD>Neotree action=focus reveal reveal_force_cwd<CR>",
-					desc = "Explorer focus reveal ",
-				},
-			},
-		},
-
 		{
 			"echasnovski/mini.clue",
 			opts = function()
@@ -122,6 +127,7 @@ require("lazy").setup({
 						{ mode = "n", keys = "<Leader>g", desc = "Git  / Go to" },
 						{ mode = "n", keys = "<Leader>b", desc = "Buffer" },
 						{ mode = "n", keys = "<Leader>z", desc = "Misc." },
+						{ mode = "n", keys = "y", desc = "Yank" },
 						miniclue.gen_clues.builtin_completion(),
 						miniclue.gen_clues.g(),
 						miniclue.gen_clues.marks(),
@@ -129,19 +135,50 @@ require("lazy").setup({
 						miniclue.gen_clues.windows(),
 						miniclue.gen_clues.z(),
 					},
-					window = { delay = 100, config = { width = 48, border = "single" } },
+					window = { delay = 500, config = { width = 48, border = "single" } },
 				}
 			end,
 		},
 		{
-			"akinsho/toggleterm.nvim",
-			opts = { direction = "float" },
+			"lukas-reineke/indent-blankline.nvim",
+			main = "ibl",
+			opts = { enabled = true, indent = { char = "│", tab_char = "│" } },
+		},
+		{ "nvim-tree/nvim-web-devicons", opts = { color_icons = false } },
+		{
+			"nvim-neo-tree/neo-tree.nvim",
+			dependencies = { "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim", "nvim-tree/nvim-web-devicons" },
+			opts = {
+				window = { position = "left" },
+				filesystem = {
+					filtered_items = {
+						visible = true,
+						show_hidden_count = true,
+						hide_dotfiles = false,
+						hide_gitignored = false,
+					},
+				},
+				buffers = { follow_current_file = { enable = true } },
+			},
 			keys = {
-				{ "<A-`>", "<CMD>ToggleTerm<CR>", mode = { "n", "i", "v", "t" }, desc = "Toggle terminal" },
-				{ "<ESC>", "<CMD>ToggleTerm<CR>", mode = { "t" }, desc = "Hide terminal" },
+				{ "<Leader>H", "<CMD>Neotree action=focus dir=~<CR>", desc = "Explorer Home" },
+				{
+					"<Leader>e",
+					"<CMD>Neotree action=focus reveal reveal_force_cwd<CR>",
+					desc = "Explorer focus reveal ",
+				},
 			},
 		},
 
+		{
+			"akinsho/toggleterm.nvim",
+			opts = { direction = "float", hide_numbers = false, autochdir = true },
+			keys = {
+				{ "<A-`>", "<CMD>ToggleTerm<CR>", mode = { "n", "i", "t" }, desc = "Toggle terminal" },
+				{ "<A-`>", "<CMD>ToggleTermSendVisualSelection<CR>", mode = { "v" }, desc = "Toggle terminal" },
+				{ "<ESC>", "<CMD>ToggleTerm<CR>", mode = { "t" }, desc = "Hide terminal" },
+			},
+		},
 		-- {
 		-- 	"willothy/nvim-cokeline",
 		-- 	dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons" },
@@ -183,7 +220,7 @@ require("lazy").setup({
 			"vzze/cmdline.nvim",
 			config = function()
 				require("cmdline")({
-					window = { matchFuzzy = true, offset = 1, debounceMs = 10 },
+					window = { matchFuzzy = true, offset = 1, debounceMs = 0 },
 					hl = { default = "Pmenu", selection = "PmenuSel", directory = "Directory", substr = "LineNr" },
 					column = { maxNumber = 6, minWidth = 20 },
 					binds = { next = "<Tab>", back = "<S-Tab>" },
@@ -191,20 +228,21 @@ require("lazy").setup({
 			end,
 		},
 
-		{
-			"sindrets/diffview.nvim",
-			opts = {},
-			keys = {
-				{ "<Leader>gd", "<CMD>DiffviewOpen<CR>", desc = "Open diffview" },
-				{ "<Leader>gc", "<CMD>DiffviewClose<CR>", desc = "Close diffview" },
-			},
-		},
+		-- {
+		-- 	"sindrets/diffview.nvim",
+		-- 	opts = {},
+		-- 	keys = {
+		-- 		{ "<Leader>gd", "<CMD>DiffviewOpen<CR>", desc = "Open diffview" },
+		-- 		{ "<Leader>gc", "<CMD>DiffviewClose<CR>", desc = "Close diffview" },
+		-- 	},
+		-- },
 
 		{
 			"neovim/nvim-lspconfig",
 			dependencies = {
 				{ "williamboman/mason.nvim", opts = {} },
 				{ "williamboman/mason-lspconfig.nvim", opts = {} },
+				-- { "j-hui/fidget.nvim", opts = {} },
 			},
 			lazy = false,
 			cmd = "Mason",
@@ -300,7 +338,7 @@ require("lazy").setup({
 			keys = {
 				{ "<Leader>f", "<CMD>Telescope find_files<CR>", desc = "Telescope find files" },
 				{ "<Leader>h", "<CMD>Telescope oldfiles<CR>", desc = "Telescope find recent files" },
-				{ "<Leader>/", "<CMD>Telescope grep_string<CR>", desc = "Telescope find recent files" },
+				{ "<Leader>/", "<CMD>Telescope grep_string<CR>", desc = "Telescope grep string" },
 				{ "<Leader>b", "<CMD>Telescope buffers<CR>", desc = "Telescope buffers" },
 				{ "<Leader>c", "<CMD>Telescope commands<CR>", desc = "Telescope commands" },
 				{ "<Leader>T", "<CMD>Telescope colorscheme<CR>", desc = "Telescope colorscheme" },
@@ -316,11 +354,11 @@ require("lazy").setup({
 				"hrsh7th/cmp-nvim-lsp",
 				"hrsh7th/cmp-buffer",
 				"hrsh7th/cmp-path",
-				-- "hrsh7th/cmp-cmdline",
 				"hrsh7th/nvim-cmp",
 				"hrsh7th/vim-vsnip",
 				"hrsh7th/cmp-vsnip",
 				"rafamadriz/friendly-snippets",
+				-- "hrsh7th/cmp-cmdline",
 			},
 			opts = function()
 				local feedkey = function(key, mode)
@@ -443,7 +481,6 @@ require("lazy").setup({
 				},
 			},
 		},
-		{ "j-hui/fidget.nvim", lazy = false, opts = {} },
 		{ "Civitasv/cmake-tools.nvim", opts = {} },
 	},
 })

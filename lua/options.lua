@@ -9,14 +9,14 @@ o.ignorecase = true
 o.number = true
 o.relativenumber = true
 o.wrap = true
-o.list = true
+o.list = false
 o.listchars = 'tab:→ ,trail:·,extends:↷,precedes:↶,space:·' --,eol:↵'
 o.cursorlineopt = "both"
 o.shortmess = "I"
 o.shiftwidth = 4
 o.tabstop = 4
 o.expandtab = true
-o.so = 7
+o.so = 4
 
 
 
