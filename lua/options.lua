@@ -17,7 +17,7 @@ o.shiftwidth = 4
 o.tabstop = 4
 o.expandtab = true
 o.so = 4
-
+o.numberwidth = 5
 
 
 vim.g.neovide_position_animation_length = 0.00

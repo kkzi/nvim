@@ -347,7 +347,6 @@ require("lazy").setup({
 				{ "gd", "<CMD>Telescope lsp_definitions<CR>", desc = "Telescope go to definition" },
 			},
 		},
-
 		{
 			"hrsh7th/nvim-cmp",
 			dependencies = {
@@ -404,30 +403,13 @@ require("lazy").setup({
 					mapping = {
 						["<C-p>"] = cmp.mapping.select_prev_item(),
 						["<C-n>"] = cmp.mapping.select_next_item(),
-						["<Up>"] = cmp.mapping.select_prev_item(),
-						["<Down>"] = cmp.mapping.select_next_item(),
-						["<C-d>"] = cmp.mapping.scroll_docs(-4),
-						["<C-f>"] = cmp.mapping.scroll_docs(4),
+						["<A-j>"] = cmp.mapping.select_next_item(),
+						["<A-k>"] = cmp.mapping.select_prev_item(),
+						["<A-/>"] = cmp.mapping.complete({}),
+						["<Tab>"] = cmp.mapping.select_next_item(),
+						["<S-Tab>"] = cmp.mapping.select_prev_item(),
 						["<C-e>"] = cmp.mapping.close(),
 						["<CR>"] = cmp.mapping.confirm({ select = true }),
-						["<Tab>"] = cmp.mapping(function(fallback)
-							if cmp.visible() then
-								cmp.select_next_item()
-							elseif vim.fn["vsnip#available"](1) == 1 then
-								feedkey("<Plug>(vsnip-expand-or-jump)", "")
-								-- elseif has_words_before() then
-								-- 	cmp.complete()
-							else
-								fallback()
-							end
-						end, { "i", "s" }),
-						["<S-Tab>"] = cmp.mapping(function()
-							if cmp.visible() then
-								cmp.select_prev_item()
-							elseif vim.fn["vsnip#jumpable"](-1) == 1 then
-								feedkey("<Plug>(vsnip-jump-prev)", "")
-							end
-						end, { "i", "s" }),
 					},
 					sources = cmp.config.sources({
 						{ name = "nvim_lsp" },
