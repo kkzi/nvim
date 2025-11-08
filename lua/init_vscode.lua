@@ -1,3 +1,7 @@
+local o = vim.o
+o.ignorecase = true
+
+
 local addkey = vim.keymap.set
 -- local delkey = vim.keymap.del
 
@@ -7,6 +11,8 @@ addkey("n", "<ESC>", "<CMD>nohl<CR>", { desc = "clear hilights" })
 addkey("n", ";", ":")
 addkey("n", ">", ">>")
 addkey("n", "<", "<<")
+addkey("n", "j", "gj")
+addkey("n", "k", "gk")
 addkey("n", "gh", "_", { desc = "Go to line start" })
 addkey("n", "gl", "$", { desc = "Go to line end" })
 addkey("n", "ge", "G", { desc = "Go to last line" })
@@ -34,6 +40,9 @@ require("lazy").setup({
                     add = "ysiw", -- Add surrounding in Normal and Visual modes
                     delete = "ds", -- Delete surrounding
                     replace = "cs", -- Replace surrounding
+                    find = 'ysf', -- Find surrounding (to the right)
+                    find_left = 'ysF', -- Find surrounding (to the left)
+                    highlight = 'ysh', -- Highlight surrounding
                 },
             },
         }
